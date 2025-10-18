@@ -28,6 +28,14 @@ This project was scaffolded with `iapp init`.
 - `docker` installed locally
 - [dockerhub](https://hub.docker.com/) account
 - ethereum wallet
+- iapp.config.json:
+  ```json
+  ...
+  "env": {
+    "IEXEC_INPUT_FILES_FOLDER": "./input",
+    "IEXEC_OUT": "./output"
+  }
+  ```
 
 ### `iapp` main commands
 
