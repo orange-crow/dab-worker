@@ -7,7 +7,7 @@ import pandas as pd
 
 from respond import Respond, TaskMeta
 
-IEXEC_OUT = os.getenv('IEXEC_OUT', './output')
+IEXEC_OUT = os.getenv('IEXEC_OUT', '/iexec_out')
 
 computed_json = {}
 
@@ -28,7 +28,7 @@ try:
             dataset_name=args[3]
         )
         # 通过inputFiles获取评测数据集
-        input_dir = os.environ.get('IEXEC_INPUT_FILES_FOLDER', './input')
+        input_dir = os.environ.get('IEXEC_INPUT_FILES_FOLDER', '/iexec_in')
         print(f"Input directory: {input_dir}")
         
         file_path = os.path.join(input_dir, task_meta.dataset_name)
@@ -39,6 +39,7 @@ try:
         df = pd.read_csv(file_path)
         respond.task_meta = task_meta
         respond.dataset_size = df.shape[0]
+        # 拉取镜像
         # TODO: 执行评测任务和获取评测结果
     except Exception as e:
         print('It seems there is an issue with your protected data:', e)
