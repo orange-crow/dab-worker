@@ -41,11 +41,11 @@ try:
         if os.path.exists(file_path):
             logger.info(f"File found at: {file_path}")
         else:
+            # 在 worker 节点上, 文件名会被加密, 不再是原来的文件名, 所以通过使用第一个文件来获取评测数据集（因为只传了一个文件）
             logger.warning(f"File not found at: {file_path}, using first file: {file_path}")
             file_name = os.listdir(IEXEC_IN)[0]
             file_path = os.path.join(IEXEC_IN, file_name)
             logger.info(f"Using first file: {file_path}")
-            respond.task_meta.dataset_name = file_name
         df = pd.read_csv(file_path)
         respond.dataset_size = df.shape[0]
         # 拉取镜像
