@@ -41,10 +41,8 @@ try:
         if os.path.exists(file_path):
             logger.info(f"File found at: {file_path}")
         else:
-            logger.error(f"File not found at: {file_path}")
-            respond.error = f"File not found at: {file_path}"
-            raise Exception(f"File not found at: {file_path}")
-
+            logger.warning(f"File not found at: {file_path}, using first file: {file_path}")
+            file_path = os.path.join(IEXEC_IN, os.listdir(IEXEC_IN)[0])
         df = pd.read_csv(file_path)
         respond.dataset_size = df.shape[0]
         # 拉取镜像
