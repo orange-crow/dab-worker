@@ -20,6 +20,9 @@ try:
     print(f"Received {len(args)} args")
 
     try:
+        # if len(args) < 4:
+        #     print(f"ERROR: Not enough arguments. Expected 4, got {len(args)}")
+        #     respond.error = f"Not enough arguments. Expected 4, got {len(args)}"
         # 评测任务元数据
         task_meta = TaskMeta(
             task_id=args[0],
@@ -27,6 +30,7 @@ try:
             dab_image_tag=args[2],
             dataset_name=args[3]
         )
+        respond.task_meta = task_meta
         # 通过inputFiles获取评测数据集
         input_dir = os.environ.get('IEXEC_INPUT_FILES_FOLDER', '/iexec_in')
         print(f"Input directory: {input_dir}")
@@ -37,7 +41,6 @@ try:
         print(f"Directory contents: {os.listdir(input_dir) if os.path.exists(input_dir) else 'Directory does not exist'}")
 
         df = pd.read_csv(file_path)
-        respond.task_meta = task_meta
         respond.dataset_size = df.shape[0]
         # 拉取镜像
         # TODO: 执行评测任务和获取评测结果
