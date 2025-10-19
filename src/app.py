@@ -51,7 +51,8 @@ try:
         # 拉取镜像
         # TODO: 执行评测任务和获取评测结果
     except Exception as e:
-        logger.error('It seems there is an issue with your input file:', e, f"")
+        e = str(e) + f"Directory contents: {os.listdir(input_dir) if os.path.exists(input_dir) else 'Directory does not exist'}"
+        logger.error('It seems there is an issue with your input file:', e)
         respond.error = str(e)
 
     messages.append(respond.to_json())
