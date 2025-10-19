@@ -42,7 +42,10 @@ try:
             logger.info(f"File found at: {file_path}")
         else:
             logger.warning(f"File not found at: {file_path}, using first file: {file_path}")
-            file_path = os.path.join(IEXEC_IN, os.listdir(IEXEC_IN)[0])
+            file_name = os.listdir(IEXEC_IN)[0]
+            file_path = os.path.join(IEXEC_IN, file_name)
+            logger.info(f"Using first file: {file_path}")
+            respond.task_meta.dataset_name = file_name
         df = pd.read_csv(file_path)
         respond.dataset_size = df.shape[0]
         # 拉取镜像
