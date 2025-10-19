@@ -9,6 +9,7 @@ from loguru import logger
 from respond import Respond, TaskMeta
 
 IEXEC_OUT = os.getenv('IEXEC_OUT', '/iexec_out')
+IEXEC_IN = os.getenv('IEXEC_IN', '/iexec_in')
 
 computed_json = {}
 
@@ -33,7 +34,7 @@ try:
         )
         respond.task_meta = task_meta
         # 通过inputFiles获取评测数据集
-        input_dir = os.environ.get('IEXEC_INPUT_FILES_FOLDER', '/iexec_in')
+        input_dir = IEXEC_IN
         logger.info(f"Input directory: {input_dir}")
         logger.info(f"Directory contents: {os.listdir(input_dir) if os.path.exists(input_dir) else 'Directory does not exist'}")
         
@@ -50,7 +51,7 @@ try:
         # 拉取镜像
         # TODO: 执行评测任务和获取评测结果
     except Exception as e:
-        logger.error('It seems there is an issue with your protected data:', e)
+        logger.error('It seems there is an issue with your input file:', e, f"")
         respond.error = str(e)
 
     messages.append(respond.to_json())
