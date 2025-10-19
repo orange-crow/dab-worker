@@ -4,6 +4,7 @@ import sys
 import json
 from pyfiglet import Figlet
 import pandas as pd
+from loguru import logger
 
 from respond import Respond, TaskMeta
 
@@ -33,19 +34,23 @@ try:
         respond.task_meta = task_meta
         # 通过inputFiles获取评测数据集
         input_dir = os.environ.get('IEXEC_INPUT_FILES_FOLDER', '/iexec_in')
-        print(f"Input directory: {input_dir}")
+        logger.info(f"Input directory: {input_dir}")
+        logger.info(f"Directory contents: {os.listdir(input_dir) if os.path.exists(input_dir) else 'Directory does not exist'}")
         
         file_path = os.path.join(input_dir, task_meta.dataset_name)
-        print(f"Looking for file at: {file_path}")
-        print(f"Input directory: {input_dir}")
-        print(f"Directory contents: {os.listdir(input_dir) if os.path.exists(input_dir) else 'Directory does not exist'}")
+        if os.path.exists(file_path):
+            logger.info(f"File found at: {file_path}")
+        else:
+            logger.error(f"File not found at: {file_path}")
+            respond.error = f"File not found at: {file_path}"
+            raise Exception(f"File not found at: {file_path}")
 
         df = pd.read_csv(file_path)
         respond.dataset_size = df.shape[0]
         # 拉取镜像
         # TODO: 执行评测任务和获取评测结果
     except Exception as e:
-        print('It seems there is an issue with your protected data:', e)
+        logger.error('It seems there is an issue with your protected data:', e)
         respond.error = str(e)
 
     messages.append(respond.to_json())
@@ -55,7 +60,7 @@ try:
         f.write(txt)
     computed_json = {'deterministic-output-path': IEXEC_OUT + '/result.txt'}
 except Exception as e:
-    print(e)
+    logger.error(e)
     computed_json = {'deterministic-output-path': IEXEC_OUT,
                      'error-message': 'Oops something went wrong'}
 finally:

@@ -2,3 +2,4 @@
 pyfiglet==1.0.2
 borsh-construct==0.1.0
 pandas==2.2.3
+loguru
