@@ -34,11 +34,10 @@ try:
         )
         respond.task_meta = task_meta
         # 通过inputFiles获取评测数据集
-        input_dir = IEXEC_IN
-        logger.info(f"Input directory: {input_dir}")
-        logger.info(f"Directory contents: {os.listdir(input_dir) if os.path.exists(input_dir) else 'Directory does not exist'}")
+        logger.info(f"Input directory: {IEXEC_IN}")
+        logger.info(f"Directory contents: {os.listdir(IEXEC_IN) if os.path.exists(IEXEC_IN) else 'Directory does not exist'}")
         
-        file_path = os.path.join(input_dir, task_meta.dataset_name)
+        file_path = os.path.join(IEXEC_IN, task_meta.dataset_name)
         if os.path.exists(file_path):
             logger.info(f"File found at: {file_path}")
         else:
@@ -51,7 +50,7 @@ try:
         # 拉取镜像
         # TODO: 执行评测任务和获取评测结果
     except Exception as e:
-        e = str(e) + f"Directory contents: {os.listdir(input_dir) if os.path.exists(input_dir) else 'Directory does not exist'}"
+        e = str(e) + f"Directory contents: {os.listdir(IEXEC_IN) if os.path.exists(IEXEC_IN) else 'Directory does not exist'}"
         logger.error('It seems there is an issue with your input file:', e)
         respond.error = str(e)
 
