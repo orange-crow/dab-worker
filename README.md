@@ -21,19 +21,18 @@ DAB（Decentralized Agent Benchmarking）是一个基于 iExec 去中心化计�
 DAB 系统由三个核心组件组成：
 
 ```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   DAB Core      │    │   DAB Server    │    │   DAB Worker    │
-│                 │    │                 │    │                 │
-│ • iExec SDK     │◄──►│ • 任务管理      │◄──►│ • 评测执行      │
-│ • 应用部署      │    │ • 用户认证      │    │ • TEE 环境      │
-│ • 任务运行      │    │ • 数据存储      │    │ • 结果处理      │
-│ • API 接口      │    │ • 监控日志      │    │ • 安全计算      │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
+┌─────────────────┐    ┌─────────────────┐
+│   DAB Server    │    │   DAB Worker    │
+│                 │    │                 │
+│ • 任务管理      │◄──►│ • 评测执行      │
+│ • 用户认证      │    │ • TEE 环境      │
+│ • 数据存储      │    │ • 结果处理      │
+│ • 监控日志      │    │ • 安全计算      │
+└─────────────────┘    └─────────────────┘
 ```
 
 ### 组件说明
 
-- **DAB Core**: iExec SDK 集成层，负责应用的测试、部署和运行
 - **DAB Server**: 中心化服务平台，提供任务管理、用户认证和数据存储
 - **DAB Worker**: 分布式评测执行器，在 TEE 环境中安全执行评测任务
 
@@ -88,42 +87,19 @@ cp env.example .env
 npm run dev
 ```
 
-#### 2. 启动 DAB Core
-
-```bash
-cd dab-core
-
-# 安装依赖
-npm install
-
-# 配置环境变量
-cp .env.example .env
-# 编辑 .env 文件，配置 iExec 私钥等参数
-
-# 启动服务
-npm run dev
-```
-
-#### 3. 部署 DAB Worker
+#### 2. 部署 DAB Worker
 
 ```bash
 cd dab-worker
 
-# 安装依赖
-pip install -r requirements.txt
-
-# 配置 iExec 应用
-# 编辑 iapp.config.json 文件
-
 # 部署到 iExec 网络
-iexec app deploy
+iapp deploy
 ```
 
 ## 📖 详细文档
 
 ### 核心组件文档
 
-- [DAB Core 文档](./dab-core/README.md) - iExec SDK 集成和 API 接口
 - [DAB Server 文档](./dab-server/README.md) - 中心化服务平台
 - [DAB Worker 文档](./dab-worker/README.md) - 分布式评测执行器
 
@@ -221,10 +197,6 @@ curl -X POST http://localhost:3000/api/v1/tasks/{taskId}/execute \
 
 ```
 dab/
-├── dab-core/           # iExec SDK 集成层
-│   ├── src/           # 源代码
-│   ├── test/          # 测试文件
-│   └── package.json   # Node.js 依赖
 ├── dab-server/        # 中心化服务平台
 │   ├── src/           # 源代码
 │   ├── test/          # 测试文件
