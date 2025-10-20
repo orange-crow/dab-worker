@@ -6,7 +6,7 @@ from pyfiglet import Figlet
 import pandas as pd
 from loguru import logger
 
-from respond import Respond, TaskMeta
+from respond import Respond, TaskMeta, mock_evaluation_results
 
 IEXEC_OUT = os.getenv('IEXEC_OUT', '/iexec_out')
 IEXEC_IN = os.getenv('IEXEC_IN', '/iexec_in')
@@ -19,7 +19,7 @@ try:
 
     # 通过args获取: 评测任务id，dab评测服务镜像地址，dab评测服务镜像标签, 评测数据集名称
     args = sys.argv[1:]
-    print(f"Received {len(args)} args")
+    logger.info(f"Received {len(args)} args")
 
     try:
         # if len(args) < 4:
@@ -28,14 +28,13 @@ try:
         # 评测任务元数据
         task_meta = TaskMeta(
             task_id=args[0],
-            dab_image_address=args[1],
-            dab_image_tag=args[2],
-            dataset_name=args[3]
+            agent_git_url=args[1],
+            dataset_name=args[2]
         )
         respond.task_meta = task_meta
         # 通过inputFiles获取评测数据集
         logger.info(f"Input directory: {IEXEC_IN}")
-        logger.info(f"Directory contents: {os.listdir(IEXEC_IN) if os.path.exists(IEXEC_IN) else 'Directory does not exist'}")
+        logger.info(f"Input Directory contents: {os.listdir(IEXEC_IN) if os.path.exists(IEXEC_IN) else 'Directory does not exist'}")
         
         file_path = os.path.join(IEXEC_IN, task_meta.dataset_name)
         if os.path.exists(file_path):
@@ -48,8 +47,9 @@ try:
             logger.info(f"Using first file: {file_path}")
         df = pd.read_csv(file_path)
         respond.dataset_size = df.shape[0]
-        # 拉取镜像
         # TODO: 执行评测任务和获取评测结果
+        # result = evaluate(idx, question, answer)
+        respond.messages = {"task_id": task_meta.task_id, "evaluation_results": mock_evaluation_results}
     except Exception as e:
         e = str(e) + f"Directory contents: {os.listdir(IEXEC_IN) if os.path.exists(IEXEC_IN) else 'Directory does not exist'}"
         logger.error('It seems there is an issue with your input file:', e)
