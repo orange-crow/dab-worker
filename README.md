@@ -47,6 +47,14 @@ DAB 系统由三个核心组件组成：
 - PostgreSQL 12+
 - Redis 6+
 - iExec 钱包和私钥
+- iapp.config.json:
+  ```json
+  "env": {
+    "IEXEC_INPUT_FILES_FOLDER": "/iexec_in",
+    "IEXEC_IN": "/iexec_in",
+    "IEXEC_OUT": "/iexec_out"
+  }
+  ```
 
 ### 一键启动（推荐）
 
