@@ -1,202 +1,426 @@
-# iApp DABWorker
+# DAB - 分布式智能体评测平台
 
-This project is an iExec Decentralized Confidential Computing serverless
-application leveraging Trusted Execution Environment (TEE).
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node.js Version](https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen.svg)](https://nodejs.org/)
+[![Python Version](https://img.shields.io/badge/python-3.13.3-blue.svg)](https://python.org/)
 
-This project was scaffolded with `iapp init`.
+DAB（Decentralized Agent Benchmarking）是一个基于 iExec 去中心化计算平台的智能体评测系统。该系统通过可信执行环境（TEE）确保评测过程的透明性和安全性，为智能体性能评估提供可靠的分布式计算解决方案。
 
-- [iApp DABWorker](#iapp-dabworker)
-  - [Quick start](#quick-start)
-    - [Prerequisites](#prerequisites)
-    - [`iapp` main commands](#iapp-main-commands)
-    - [Develop](#develop)
-    - [Test locally](#test-locally)
-    - [Deploy on iExec](#deploy-on-iexec)
-    - [Run on iExec](#run-on-iexec)
-  - [Project overview](#project-overview)
-  - [iApp development guidelines](#iapp-development-guidelines)
-    - [iApp inputs](#iapp-inputs)
-    - [iApp outputs](#iapp-outputs)
-      - [`computed.json`](#computedjson)
-    - [working with libraries](#working-with-libraries)
+## 🌟 项目特色
 
-## Quick start
+- 🚀 **分布式计算**: 基于 iExec 网络的分布式评测任务执行
+- 🔒 **安全可信**: TEE 环境确保数据安全和计算透明性
+- 📊 **完整监控**: 任务执行全生命周期监控和追踪
+- 🔐 **权限管理**: 基于 JWT 的用户认证和权限控制
+- 📈 **性能优化**: 智能任务调度和资源管理
+- 🛡️ **错误恢复**: 完善的错误处理和自动重试机制
+- 🐳 **容器化部署**: 完整的 Docker 和 Docker Compose 支持
 
-### Prerequisites
+## 🏗️ 系统架构
 
-- `iapp` CLI installed locally
-- `docker` installed locally
-- [dockerhub](https://hub.docker.com/) account
-- ethereum wallet
-- iapp.config.json:
-  ```json
-  ...
-  "env": {
-    "IEXEC_INPUT_FILES_FOLDER": "./input",
-    "IEXEC_OUT": "./output"
-  }
-  ```
+DAB 系统由三个核心组件组成：
 
-### `iapp` main commands
-
-- [`iapp init`](#develop)
-- [`iapp test`](#test-locally)
-- [`iapp deploy`](#deploy-on-iexec)
-
-### Develop
-
-`iapp init` scaffolds a ready to hack iApp template.
-
-Start hacking by editing the source code in [./src](./src/).
-
-See [iApp development guidelines](#iapp-development-guidelines) for more details
-on the iApp development framework.
-
-### Test locally
-
-Use the `iapp test` command to run your app locally and check your app fulfills
-the framework's [requirements for outputs](#iapp-outputs).
-
-```sh
-iapp test
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   DAB Core      │    │   DAB Server    │    │   DAB Worker    │
+│                 │    │                 │    │                 │
+│ • iExec SDK     │◄──►│ • 任务管理      │◄──►│ • 评测执行      │
+│ • 应用部署      │    │ • 用户认证      │    │ • TEE 环境      │
+│ • 任务运行      │    │ • 数据存储      │    │ • 结果处理      │
+│ • API 接口      │    │ • 监控日志      │    │ • 安全计算      │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
 
-> ℹ️ Use the following **options** with `iapp test` to simulate
-> [inputs](#iapp-inputs):
->
-> - `--args <args>` simulates the app invocation with public input
->   [args](https://protocol.docs.iex.ec/for-developers/technical-references/application-io#args).
-> - `--inputFile <url>` simulates the app invocation with public
->   [input files](https://protocol.docs.iex.ec/for-developers/technical-references/application-io#input-files).
-> - `--requesterSecret <index=value>` simulates the app invocation with
->   [requester secrets](https://protocol.docs.iex.ec/for-developers/technical-references/application-io#requester-secrets).
-> - `--protectedData [mock name]` simulates the app invocation with a secret
->   [protected data](https://protocol.docs.iex.ec/for-developers/technical-references/application-iohttps://protocol.docs.iex.ec/for-developers/technical-references/application-io#protected-data).
-> - if your app uses an
->   [app secret](https://protocol.docs.iex.ec/for-developers/technical-references/application-io#app-developer-secret),
->   `iapp test` will prompt you to set the app secret and simulate the run of
->   the app with it. You can choose to save the secret for further reuse by
->   `iapp test` and `iapp deploy`.
+### 组件说明
 
-Check the test output in the [output](./output/) directory.
+- **DAB Core**: iExec SDK 集成层，负责应用的测试、部署和运行
+- **DAB Server**: 中心化服务平台，提供任务管理、用户认证和数据存储
+- **DAB Worker**: 分布式评测执行器，在 TEE 环境中安全执行评测任务
 
-> ℹ️ Files used by the app while running `iapp test` are located in the
-> [input](./input/) directory.
+## 🚀 快速开始
 
-### Deploy on iExec
+### 环境要求
 
-Use the `iapp deploy` command to transform your app into a TEE app and deploy it
-on the iExec decentralized platform.
+- Node.js v20+
+- Python 3.13.3
+- Docker & Docker Compose
+- PostgreSQL 12+
+- Redis 6+
+- iExec 钱包和私钥
 
-```sh
-iapp deploy
+### 一键启动（推荐）
+
+```bash
+# 克隆项目
+git clone <repository-url>
+cd dab
+
+# 启动所有服务
+docker-compose up -d
+
+# 验证服务状态
+curl http://localhost:3000/api/v1/health
 ```
 
-> ℹ️ for apps using an
-> [app secret](https://protocol.docs.iex.ec/for-developers/technical-references/application-io#app-developer-secret)
->
-> The app secret is provisioned once, at the app deployment time. If an app
-> secret was already provided to `iapp test` and saved in
-> [iapp.config.json](./iapp.config.json), `iapp deploy` will reuse this secret.
+### 分步启动
 
-### Run on iExec
+#### 1. 启动 DAB Server
 
-Use the `run` command to run a deployed app on the iExec decentralized platform.
+```bash
+cd dab-server
 
-```sh
-iapp run <iapp-address>
+# 安装依赖
+npm install
+
+# 配置环境变量
+cp env.example .env
+# 编辑 .env 文件，配置数据库、Redis、iExec 等参数
+
+# 启动服务
+npm run dev
 ```
 
-> ℹ️ Use the following **options** with `iapp run` to inject inputs:
->
-> - `--args <args>` run the app with public input
->   [args](https://protocol.docs.iex.ec/for-developers/technical-references/application-io#args)
-> - `--inputFile <url>` run the app with public
->   [input files](https://protocol.docs.iex.ec/for-developers/technical-references/application-io#input-files)
-> - `--requesterSecret <index=value>` run the app with
->   [requester secrets](https://protocol.docs.iex.ec/for-developers/technical-references/application-io#requester-secrets)
-> - `--protectedData <protected-data-address>` run the app with a secret
->   [protected data](https://protocol.docs.iex.ec/for-developers/technical-references/application-io#protected-data)
+#### 2. 启动 DAB Core
 
-## Project overview
+```bash
+cd dab-core
 
-- [iapp.config.json](./iapp.config.json) configuration file for the `iapp`
-  commands (⚠️ this file contains sensitive information such as credentials or
-  wallet and should never be committed in a public repository).
-- [src/](./src/) where your code lives when you [develop](#develop) your app.
-- [Dockerfile](./Dockerfile) how to build your app docker image.
-- [input/](./input/) input directory for your [local tests](#test-locally).
-- [output/](./output/) output directory for your [local tests](#test-locally).
-- [cache/](./cache/) directory contains traces of your past app
-  [deployments](#deploy-on-iexec) and [runs](#run-on-iexec).
+# 安装依赖
+npm install
 
-## iApp development guidelines
+# 配置环境变量
+cp .env.example .env
+# 编辑 .env 文件，配置 iExec 私钥等参数
 
-iApps are serverless Decentralized Confidential Computing applications running
-on iExec's decentralized workers. This framework gives the guidelines to build
-such an application.
-
-### iApp inputs
-
-iApps can process different kind of inputs:
-
-- Requester inputs:
-
-  - public
-    [args](https://protocol.docs.iex.ec/for-developers/technical-references/application-io#args)
-  - public
-    [input files](https://protocol.docs.iex.ec/for-developers/technical-references/application-io#input-files)
-  - [requester secrets](https://protocol.docs.iex.ec/for-developers/technical-references/application-io#requester-secrets)
-
-- App developer inputs
-
-  - [app secret](https://protocol.docs.iex.ec/for-developers/technical-references/application-io#app-developer-secret)
-
-- Third party inputs:
-
-  - secret
-    [protected data](https://protocol.docs.iex.ec/for-developers/technical-references/application-io#protected-data)
-
-### iApp outputs
-
-iApp's must write
-[output](https://protocol.docs.iex.ec/for-developers/technical-references/application-io#application-outputs)
-files in the `IEXEC_OUT` (`/iexec_out/`) directory.
-
-Each iApp run must produce a specific [`computed.json`](#computedjson) file.
-
-> ⚠️ **Output size limitation:**  
-> The results uploaded by the worker must not exceed **50 MB**.  
-> If the size exceeds this limit, the task will fail with the error
-> `POST_COMPUTE_FAILED_UNKNOWN_ISSUE`.  
-> Ensure your iApp generates outputs within this limit during testing.
-
-#### `computed.json`
-
-The `computed.json` file is a JSON file referencing a deterministic result in
-the `IEXEC_OUT` directory (any iApp run with the same inputs should create the
-same deterministic result).
-
-```json
-{
-  "deterministic-output-path": "iexec_out/path/to/deterministic/result"
-}
+# 启动服务
+npm run dev
 ```
 
-> ℹ️ Only files referenced in `deterministic-output-path` must be deterministic,
-> other files produced in the `IEXEC_OUT` directory can be non-deterministic.
+#### 3. 部署 DAB Worker
 
-### working with libraries
+```bash
+cd dab-worker
 
-iApp can use libraries as soon as these libraries are installed while building
-the project's [`Dockerfile`](./Dockerfile).
+# 安装依赖
+pip install -r requirements.txt
 
-> ℹ️ **Limitation**
->
-> Transforming an app into a TEE application requires a base image (image
-> `FROM`) compatible with the transformation. Currently only a small set of base
-> images are available.
->
-> - make sure installed libraries can run within the base image
-> - do not try to replace the base image in the Dockerfile, this would lead to
->   failing TEE transformation.
+# 配置 iExec 应用
+# 编辑 iapp.config.json 文件
+
+# 部署到 iExec 网络
+iexec app deploy
+```
+
+## 📖 详细文档
+
+### 核心组件文档
+
+- [DAB Core 文档](./dab-core/README.md) - iExec SDK 集成和 API 接口
+- [DAB Server 文档](./dab-server/README.md) - 中心化服务平台
+- [DAB Worker 文档](./dab-worker/README.md) - 分布式评测执行器
+
+### 快速指南
+
+- [DAB Server 快速启动](./dab-server/QUICKSTART.md) - 5分钟快速上手
+- [环境配置说明](./dab-core/ENV_CONFIG.md) - 详细的环境变量配置
+
+## 🔧 API 接口
+
+### 认证接口
+
+```http
+POST /api/v1/auth/register    # 用户注册
+POST /api/v1/auth/login       # 用户登录
+```
+
+### 任务管理接口
+
+```http
+POST   /api/v1/tasks                    # 创建评测任务
+GET    /api/v1/tasks/{taskId}/status    # 查询任务状态
+POST   /api/v1/tasks/{taskId}/deploy    # 部署任务
+POST   /api/v1/tasks/{taskId}/execute   # 执行任务
+GET    /api/v1/tasks/{taskId}/results   # 获取任务结果
+```
+
+### iExec 集成接口
+
+```http
+POST /api/iapp/test      # 测试 iExec 应用
+POST /api/iapp/deploy    # 部署 iExec 应用
+POST /api/iapp/run       # 运行 iExec 应用
+```
+
+### 健康检查接口
+
+```http
+GET /api/v1/health           # 基础健康检查
+GET /api/v1/health/detailed  # 详细健康检查
+```
+
+## 💡 使用示例
+
+### 创建评测任务
+
+```bash
+curl -X POST http://localhost:3000/api/v1/tasks \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d '{
+    "taskName": "智能体性能评测",
+    "description": "基于标准数据集的大语言模型性能评估",
+    "appId": "0x456def...",
+    "llmConfigs": {
+      "model": "gpt-4",
+      "temperature": 0.7,
+      "maxTokens": 4096
+    },
+    "datasetConfig": {
+      "urls": ["https://data.gov/reference-corpus.csv"],
+      "format": "csv"
+    },
+    "resourceRequirements": {
+      "dockerHubName": "dab/agent-evaluator",
+      "minCpuCores": 4,
+      "minMemoryGB": 8
+    }
+  }'
+```
+
+### 部署和运行任务
+
+```bash
+# 部署任务
+curl -X POST http://localhost:3000/api/v1/tasks/{taskId}/deploy \
+  -H "Authorization: Bearer YOUR_TOKEN"
+
+# 执行任务
+curl -X POST http://localhost:3000/api/v1/tasks/{taskId}/execute \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d '{
+    "executionParams": {
+      "maxWorkers": 10,
+      "batchSize": 100,
+      "timeout": 3600
+    }
+  }'
+```
+
+## 🛠️ 开发指南
+
+### 项目结构
+
+```
+dab/
+├── dab-core/           # iExec SDK 集成层
+│   ├── src/           # 源代码
+│   ├── test/          # 测试文件
+│   └── package.json   # Node.js 依赖
+├── dab-server/        # 中心化服务平台
+│   ├── src/           # 源代码
+│   ├── test/          # 测试文件
+│   ├── docker-compose.yml  # Docker 配置
+│   └── package.json   # Node.js 依赖
+└── dab-worker/        # 分布式评测执行器
+    ├── src/           # Python 源代码
+    ├── requirements.txt  # Python 依赖
+    └── iapp.config.json # iExec 应用配置
+```
+
+### 开发命令
+
+```bash
+# 运行测试
+npm test                # 在 dab-core 或 dab-server 目录下
+python -m pytest       # 在 dab-worker 目录下
+
+# 代码检查
+npm run lint           # ESLint 检查
+npm run lint:fix       # 自动修复 ESLint 问题
+
+# 启动开发服务器
+npm run dev            # 开发模式启动
+npm start              # 生产模式启动
+```
+
+### 测试
+
+```bash
+# 运行所有测试
+npm test
+
+# 运行测试并生成覆盖率报告
+npm run test:coverage
+
+# 监听模式运行测试
+npm run test:watch
+```
+
+## 🐳 部署指南
+
+### Docker 部署
+
+```bash
+# 构建所有镜像
+docker-compose build
+
+# 启动所有服务
+docker-compose up -d
+
+# 查看服务状态
+docker-compose ps
+
+# 查看日志
+docker-compose logs -f
+```
+
+### 生产环境配置
+
+1. **环境变量配置**
+   ```env
+   NODE_ENV=production
+   DB_HOST=your-db-host
+   REDIS_HOST=your-redis-host
+   IEXEC_WALLET_PRIVATE_KEY=your-production-key
+   JWT_SECRET=your-production-secret
+   ```
+
+2. **安全配置**
+   - 使用强密码和密钥
+   - 配置 HTTPS
+   - 设置防火墙规则
+   - 定期备份数据
+
+3. **监控和日志**
+   - 配置日志轮转
+   - 设置监控告警
+   - 定期健康检查
+
+## 🔒 安全考虑
+
+- **数据加密**: 所有敏感数据加密传输和存储
+- **访问控制**: 基于 JWT 的用户认证和授权
+- **TEE 安全**: 利用可信执行环境确保计算安全
+- **审计日志**: 记录所有关键操作和访问
+- **限流保护**: 防止 API 滥用和 DDoS 攻击
+
+## 📊 监控和运维
+
+### 健康检查
+
+```bash
+# 基础健康检查
+curl http://localhost:3000/api/v1/health
+
+# 详细健康检查
+curl http://localhost:3000/api/v1/health/detailed
+```
+
+### 日志管理
+
+```bash
+# 查看应用日志
+tail -f logs/combined-$(date +%Y-%m-%d).log
+
+# 查看错误日志
+tail -f logs/error-$(date +%Y-%m-%d).log
+
+# 查看 Docker 日志
+docker-compose logs -f dab-server
+```
+
+### 性能监控
+
+系统提供详细的性能监控指标：
+- 请求响应时间
+- 任务执行统计
+- 系统资源使用情况
+- 数据库和 Redis 连接状态
+
+## 🐛 故障排除
+
+### 常见问题
+
+1. **数据库连接失败**
+   ```bash
+   # 检查 PostgreSQL 状态
+   docker-compose logs postgres
+   
+   # 重启数据库
+   docker-compose restart postgres
+   ```
+
+2. **Redis 连接失败**
+   ```bash
+   # 检查 Redis 状态
+   docker-compose logs redis
+   
+   # 重启 Redis
+   docker-compose restart redis
+   ```
+
+3. **iExec 连接失败**
+   - 检查钱包私钥是否正确
+   - 验证网络配置
+   - 确认 iExec 链设置
+
+4. **任务执行失败**
+   - 检查 iExec 网络状态
+   - 验证任务配置参数
+   - 查看 Worker 日志
+
+### 重置环境
+
+```bash
+# 停止所有服务
+docker-compose down
+
+# 删除数据卷（注意：会丢失所有数据）
+docker-compose down -v
+
+# 重新启动
+docker-compose up -d
+```
+
+## 🤝 贡献指南
+
+我们欢迎社区贡献！请遵循以下步骤：
+
+1. Fork 项目
+2. 创建功能分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 打开 Pull Request
+
+### 开发规范
+
+- 遵循 ESLint 代码规范
+- 编写单元测试
+- 更新相关文档
+- 确保所有测试通过
+
+## 📄 许可证
+
+本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情。
+
+## 📞 联系方式
+
+- **项目维护团队**: DAB 开发团队
+- **文档版本**: v1.0
+- **最后更新**: 2025年1月
+
+## 🙏 致谢
+
+感谢以下开源项目和技术：
+
+- [iExec](https://iex.ec/) - 去中心化计算平台
+- [Node.js](https://nodejs.org/) - JavaScript 运行时
+- [Express.js](https://expressjs.com/) - Web 应用框架
+- [PostgreSQL](https://postgresql.org/) - 关系型数据库
+- [Redis](https://redis.io/) - 内存数据库
+- [Docker](https://docker.com/) - 容器化平台
+
+---
+
+**注意**: 这是一个开发/测试环境配置。生产环境部署请参考完整的部署指南和安全配置。
