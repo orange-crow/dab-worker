@@ -18,7 +18,7 @@ DAB（Decentralized Agent Benchmarking）是一个基于 iExec 去中心化计�
 
 ## 🏗️ 系统架构
 
-DAB 系统由三个核心组件组成：
+DAB 系统由2个核心组件组成：
 
 ```
 ┌─────────────────┐    ┌─────────────────┐
